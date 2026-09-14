@@ -7,9 +7,20 @@ const manufacturerSchema = new mongoose.Schema({
   address: { type: String, default: '' },
   pincode: { type: String, default: '' },
   contactPerson: { type: String, required: true },
-  phone: { type: String, required: true },
+  phone: {
+    type: String,
+    required: true,
+    match: [/^\+[1-9]\d{7,14}$/, 'Phone number must include a country code, e.g. +919876543210']
+  },
   whatsapp: { type: String, default: '' },
-  email: { type: String, default: '' },
+  email: {
+    type: String,
+    default: '',
+    validate: {
+      validator: (v) => !v || /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v),
+      message: 'Please enter a valid email address'
+    }
+  },
   website: { type: String, default: '' },
   description: { type: String, default: '' },
   establishedYear: { type: Number },
@@ -24,6 +35,8 @@ const manufacturerSchema = new mongoose.Schema({
   coverImage: { type: String, default: '' },
   galleryImages: [{ imagePath: String, caption: String, displayOrder: Number }],
   isVerified: { type: Boolean, default: false },
+  applicationStatus: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'approved' },
+  pendingCityName: { type: String, default: '' },
   verificationDate: { type: Date },
   verifiedBy: { type: String, default: '' },
   isActive: { type: Boolean, default: true },
